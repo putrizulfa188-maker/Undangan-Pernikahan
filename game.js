@@ -3,11 +3,11 @@ const config = {
     type: Phaser.AUTO,
 
     parent: "game-container",
-    // TAMBAHKAN BARIS INI:
-        dom: {
-            createContainer: true
-        },
-        
+
+    dom: {
+        createContainer: true
+    },
+
     width: 1280,
     height: 720,
 
@@ -18,10 +18,6 @@ const config = {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
 
-    // ==========================
-    // Physics
-    // ==========================
-
     physics: {
         default: "arcade",
         arcade: {
@@ -29,13 +25,9 @@ const config = {
         }
     },
 
-    // ==========================
-    // Scene
-    // ==========================
-
     scene: [
         CoverScene,
-        LoadingScene,        
+        LoadingScene,
         SelectionScene,
         GardenScene,
         EndingScene
@@ -43,21 +35,44 @@ const config = {
 
 };
 
-new Phaser.Game(config);
+// ==========================
+// BUAT GAME
+// ==========================
+
+const game = new Phaser.Game(config);
+
+// ==========================
+// CEK ORIENTASI
+// ==========================
 
 function checkOrientation() {
 
     const overlay = document.getElementById("rotate-device");
 
+    if (!overlay) return;
+
     if (window.innerHeight > window.innerWidth) {
+
+        // Portrait
         overlay.style.display = "flex";
+
     } else {
+
+        // Landscape
         overlay.style.display = "none";
+
     }
+
+    // Refresh ukuran Phaser
+    game.scale.refresh();
 
 }
 
-window.addEventListener("resize", checkOrientation);
-window.addEventListener("orientationchange", checkOrientation);
+// Jalankan saat halaman selesai dimuat
+window.addEventListener("load", checkOrientation);
 
-checkOrientation();
+// Jalankan saat ukuran berubah
+window.addEventListener("resize", checkOrientation);
+
+// Jalankan saat HP diputar
+window.addEventListener("orientationchange", checkOrientation);
