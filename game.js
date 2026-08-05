@@ -44,3 +44,20 @@ const config = {
 };
 
 new Phaser.Game(config);
+
+function checkOrientation() {
+
+    const overlay = document.getElementById("rotate-device");
+
+    if (window.innerHeight > window.innerWidth) {
+        overlay.style.display = "flex";
+    } else {
+        overlay.style.display = "none";
+    }
+
+}
+
+window.addEventListener("resize", checkOrientation);
+window.addEventListener("orientationchange", checkOrientation);
+
+checkOrientation();
