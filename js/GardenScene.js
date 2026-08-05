@@ -112,7 +112,7 @@ class GardenScene extends Phaser.Scene {
 
         this.shadow = this.add.image(centerX, 180, "pengantin").setScale(0.15).setAlpha(0.6).setVisible(false);
 
-        this.btnPelaminan = this.add.text(0, 0, " NAIK KE PELAMINAN ", {
+        this.btnPelaminan = this.add.text(0, -30, " NAIK KE PELAMINAN ", {
             fontSize: "18px", backgroundColor: "#ff007f", color: "#ffffff", padding: { x: 10, y: 5 }, fontStyle: "bold"
         }).setOrigin(0.5).setVisible(false).setInteractive().setDepth(60);
 
@@ -129,7 +129,7 @@ class GardenScene extends Phaser.Scene {
         });
         
         this.popupContainer = this.add.container(centerX, centerY).setDepth(100).setVisible(false);
-        this.popupBg = this.add.rectangle(0, 0, 400, 200, 0x000000, 0.8).setStrokeStyle(4, 0xffffff);
+        this.popupBg = this.add.rectangle(0, -30, 400, 200, 0x000000, 0.8).setStrokeStyle(4, 0xffffff);
         this.popupText = this.add.text(0, -20, "", { fontSize: "24px", color: "#ffffff", align: "center", wordWrap: { width: 350, useAdvancedWrap: true } }).setOrigin(0.5);
 
         this.fotoIndex = 1; this.totalFoto = 3;
@@ -148,7 +148,7 @@ class GardenScene extends Phaser.Scene {
         this.teksPria = this.add.text(160, 50, "Muhamad Firmansyah\nPutra dari Bapak ... dan Ibu ...", { fontSize: "16px", color: "#ffffff", align: "center", wordWrap: { width: 220 } }).setOrigin(0.5).setVisible(false);
 
         this.targetTanggalAcara = new Date("Dec 31, 2026 09:00:00").getTime(); 
-        this.teksCountdown = this.add.text(0, 0, "", { fontSize: "22px", color: "#ffcc00", align: "center", fontStyle: "bold", backgroundColor: "#222222", padding: { x: 10, y: 10 } }).setOrigin(0.5).setVisible(false);
+        this.teksCountdown = this.add.text(0, -30, "", { fontSize: "22px", color: "#ffcc00", align: "center", fontStyle: "bold", backgroundColor: "#222222", padding: { x: 10, y: 10 } }).setOrigin(0.5).setVisible(false);
         
         this.btnGmaps = this.add.text(0, 70, " 📍 BUKA GOOGLE MAPS ", { fontSize: "18px", backgroundColor: "#007bff", color: "#ffffff", padding: { x: 10, y: 8 } }).setOrigin(0.5).setInteractive().setVisible(false);
         this.btnGmaps.on("pointerdown", () => { this.popSound.play(); window.open("https://maps.app.goo.gl/masukkan_link_disini", "_blank"); });
@@ -162,7 +162,7 @@ class GardenScene extends Phaser.Scene {
             this.teksCountdown, this.btnGmaps, this.closeBtn
         ]);
 
-        this.btnAmbil = this.add.text(0, 0, " BUKA ", { fontSize: "18px", backgroundColor: "#28a745", color: "#ffffff", padding: { x: 10, y: 5 } }).setOrigin(0.5).setVisible(false).setInteractive().setDepth(50);
+        this.btnAmbil = this.add.text(0, -30, " BUKA ", { fontSize: "18px", backgroundColor: "#28a745", color: "#ffffff", padding: { x: 10, y: 5 } }).setOrigin(0.5).setVisible(false).setInteractive().setDepth(50);
         this.btnAmbil.on("pointerdown", () => { this.popSound.play(); this.ambilItemSekarang(); });
 
         this.daftarObjek = [
