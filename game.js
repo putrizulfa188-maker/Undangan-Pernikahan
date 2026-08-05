@@ -38,5 +38,4 @@ const config = {
 // ==========================
 // BUAT GAME
 // ==========================
-
-const game = new Phaser.Game(config);
+new Phaser.Game(config);
