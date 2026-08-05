@@ -121,7 +121,7 @@ class SelectionScene extends Phaser.Scene {
 
         // Karakter Wanita
         const wanita = this.add.image(centerX + 130, 510, "tamu_wanita")
-            .setScale(0.18)
+            .setScale(0.22)
             .setInteractive({ useHandCursor: true });
 
         this.tweens.add({
