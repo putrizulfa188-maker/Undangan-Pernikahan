@@ -23,6 +23,11 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.rotate-icon{
+    font-size:80px;
+    animation:rotatePhone 2s infinite;
+}
+
 /* ===========================
    GAME CONTAINER (DIREVISI)
 =========================== */
