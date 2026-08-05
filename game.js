@@ -39,3 +39,12 @@ const config = {
 // BUAT GAME
 // ==========================
 new Phaser.Game(config);
+
+setTimeout(() => {
+    const canvas = document.querySelector("canvas");
+
+    console.log("Window:", window.innerWidth, window.innerHeight);
+    console.log("Canvas Attribute:", canvas.width, canvas.height);
+    console.log("Canvas Client:", canvas.clientWidth, canvas.clientHeight);
+    console.log("Canvas Style:", canvas.style.width, canvas.style.height);
+}, 1000);
