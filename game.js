@@ -39,7 +39,24 @@ const config = {
 // ==========================
 // BUAT GAME
 // ==========================
-new Phaser.Game(config);
+const game = new Phaser.Game(config);
+
+function resizeGame() {
+
+    const canvas = game.canvas;
+
+    const screenHeight = window.innerHeight;
+
+    const screenWidth = screenHeight * (1280 / 720);
+
+    canvas.style.height = screenHeight + "px";
+    canvas.style.width = screenWidth + "px";
+
+}
+
+resizeGame();
+
+window.addEventListener("resize", resizeGame);
 
 setTimeout(() => {
     const canvas = document.querySelector("canvas");
