@@ -207,7 +207,7 @@ keberkahan, serta kebahagiaan kepada kita semua.`;
             this.cameras.main.fadeOut(600);
 
             this.time.delayedCall(600, () => {
-                this.scene.start("SelectionScene");
+                this.scene.start("CoverScene");
             });
 
         });
