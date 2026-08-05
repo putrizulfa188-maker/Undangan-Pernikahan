@@ -2,80 +2,104 @@
    RESET
 =========================== */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
 /* ===========================
-   BODY
+   HTML & BODY
 =========================== */
 
 html,
-body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+body{
 
-    background: #111;
+    width:100%;
+    height:100%;
+    overflow:hidden;
 
-    font-family: Arial, Helvetica, sans-serif;
-}
+    background:#111;
 
-.rotate-icon{
-    font-size:80px;
-    animation:rotatePhone 2s infinite;
+    font-family:Arial, Helvetica, sans-serif;
+
 }
 
 /* ===========================
-   GAME CONTAINER (DIREVISI)
+   GAME CONTAINER
 =========================== */
 
-#game-container {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-    /* HAPUS display: flex, justify-content, dan align-items dari sini */
+#game-container{
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100vw;
+    height:100vh;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+
 }
 
 /* ===========================
    CANVAS
 =========================== */
 
-canvas {
-    display: block;
+canvas{
 
-    image-rendering: auto;
+    display:block;
 
-    touch-action: none;
+    height:100vh !important;
+
+    width:auto !important;
+
+    max-height:100vh;
+
+    touch-action:none;
+
+    image-rendering:auto;
+
 }
+
+/* ===========================
+   ROTATE DEVICE
+=========================== */
 
 #rotate-device{
 
-    position: fixed;
+    position:fixed;
 
-    inset: 0;
+    inset:0;
 
-    display: none;
+    display:none;
 
-    justify-content: center;
-    align-items: center;
+    justify-content:center;
 
-    background: rgba(0,0,0,0.95);
+    align-items:center;
 
-    z-index: 999999;
+    background:rgba(0,0,0,.95);
 
-    color: white;
+    z-index:999999;
 
-    text-align: center;
+    color:#fff;
 
-    padding: 20px;
+    text-align:center;
+
+    padding:20px;
 
 }
 
-#rotate-device img{
+.rotate-icon{
+
+    font-size:80px;
 
     animation:rotatePhone 2s infinite;
 
@@ -83,9 +107,17 @@ canvas {
 
 @keyframes rotatePhone{
 
-    0%{transform:rotate(0deg);}
-    50%{transform:rotate(90deg);}
-    100%{transform:rotate(0deg);}
+    0%{
+        transform:rotate(0deg);
+    }
+
+    50%{
+        transform:rotate(90deg);
+    }
+
+    100%{
+        transform:rotate(0deg);
+    }
 
 }
 
@@ -93,18 +125,22 @@ canvas {
    ORIENTATION
 =========================== */
 
-@media screen and (orientation: portrait) {
+@media (orientation:portrait){
 
-    #rotate-device {
-        display: flex;
+    #rotate-device{
+
+        display:flex;
+
     }
 
 }
 
-@media screen and (orientation: landscape) {
+@media (orientation:landscape){
 
-    #rotate-device {
-        display: none;
+    #rotate-device{
+
+        display:none;
+
     }
 
 }
