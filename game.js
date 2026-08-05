@@ -40,39 +40,3 @@ const config = {
 // ==========================
 
 const game = new Phaser.Game(config);
-
-// ==========================
-// CEK ORIENTASI
-// ==========================
-
-function checkOrientation() {
-
-    const overlay = document.getElementById("rotate-device");
-
-    if (!overlay) return;
-
-    if (window.innerHeight > window.innerWidth) {
-
-        // Portrait
-        overlay.style.display = "flex";
-
-    } else {
-
-        // Landscape
-        overlay.style.display = "none";
-
-    }
-
-    // Refresh ukuran Phaser
-    game.scale.refresh();
-
-}
-
-// Jalankan saat halaman selesai dimuat
-window.addEventListener("load", checkOrientation);
-
-// Jalankan saat ukuran berubah
-window.addEventListener("resize", checkOrientation);
-
-// Jalankan saat HP diputar
-window.addEventListener("orientationchange", checkOrientation);
