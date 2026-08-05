@@ -57,11 +57,9 @@ canvas{
 
     display:block;
 
-    height:100vh !important;
+    width:auto;
 
-    width:auto !important;
-
-    max-height:100vh;
+    height:100%;
 
     touch-action:none;
 
