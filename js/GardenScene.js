@@ -105,10 +105,10 @@ class GardenScene extends Phaser.Scene {
         this.hasFlower = false; this.hasRing = false;
         this.hasLetter = false; this.hasCamera = false;
 
-        this.flower = this.add.image(250, 220, "flower").setScale(0.10);
-        this.ring = this.add.image(1030, 220, "ring").setScale(0.50);
-        this.camera = this.add.image(250, 500, "camera").setScale(0.10);
-        this.letter = this.add.image(1030, 500, "letter").setScale(0.10);
+        this.flower = this.add.image(250, 220, "flower").setScale(0.05);
+        this.ring = this.add.image(1030, 220, "ring").setScale(0.05);
+        this.camera = this.add.image(250, 500, "camera").setScale(0.05);
+        this.letter = this.add.image(1030, 500, "letter").setScale(0.05);
 
         this.shadow = this.add.image(centerX, 180, "pengantin").setScale(0.15).setAlpha(0.6).setVisible(false);
 
