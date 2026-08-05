@@ -46,3 +46,42 @@ canvas {
 
     touch-action: none;
 }
+
+#rotate-device{
+
+    position:fixed;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    background:#111;
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:999999;
+
+    color:white;
+
+    text-align:center;
+
+}
+
+#rotate-device img{
+
+    animation:rotatePhone 2s infinite;
+
+}
+
+@keyframes rotatePhone{
+
+    0%{transform:rotate(0deg);}
+    50%{transform:rotate(90deg);}
+    100%{transform:rotate(0deg);}
+
+}
