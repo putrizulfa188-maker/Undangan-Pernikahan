@@ -90,3 +90,31 @@ canvas {
     100%{transform:rotate(0deg);}
 
 }
+
+/* ===========================
+   ORIENTATION
+=========================== */
+
+@media screen and (orientation: portrait) {
+
+    #game-container {
+        display: none;
+    }
+
+    #rotate-device {
+        display: flex;
+    }
+
+}
+
+@media screen and (orientation: landscape) {
+
+    #game-container {
+        display: block;
+    }
+
+    #rotate-device {
+        display: none;
+    }
+
+}
