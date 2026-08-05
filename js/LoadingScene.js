@@ -6,7 +6,7 @@ class LoadingScene extends Phaser.Scene {
 
     preload() {
         // Load gambar background utama
-        this.load.image("loadingBg", "assets/background/Loading.png");
+        this.load.image("loadingBg", "assets/background/loading.png");
     }
 
     create() {
