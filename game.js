@@ -14,8 +14,10 @@ const config = {
     backgroundColor: "#000000",
 
     scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        mode: Phaser.Scale.EXPAND,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 1280,
+        height: 720
     },
 
     physics: {
