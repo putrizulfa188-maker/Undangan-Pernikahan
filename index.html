@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Undangan Pernikahan - Putri & Firman</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #064e3b;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        .font-tradition { font-family: 'Playfair Display', serif; }
+        .font-title { font-family: 'Cinzel', serif; }
+        
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100%;
+            margin: 0 auto;
+            background: #15803d;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .dpad-btn {
+            background: rgba(255, 255, 255, 0.45);
+            border: 2px solid rgba(254, 240, 138, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #78350f;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.1s, background-color 0.1s;
+        }
+        .dpad-btn:active {
+            transform: scale(0.92);
+            background: rgba(254, 240, 138, 0.85);
+        }
+        .glass-modal {
+            background: rgba(255, 253, 245, 0.95);
+            backdrop-filter: blur(12px);
+            border: 2px solid #f59e0b;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.6); }
+            50% { box-shadow: 0 0 25px rgba(245, 158, 11, 0.9); }
+        }
+        .glow-active {
+            animation: pulseGlow 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-emerald-950 text-slate-800">
+
+    <div id="game-container">
+        <!-- Canvas Utama Peta Jelajah -->
+        <canvas id="mapCanvas"></canvas>
+
+        <!-- TOP BAR UI: Progress Quest & BGM Control -->
+        <div class="absolute top-3 left-3 right-3 flex justify-between items-center z-10 pointer-events-none">
+            <div class="bg-amber-950/85 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-amber-400/60 shadow-lg text-amber-100 flex items-center gap-2 text-xs sm:text-sm">
+                <i class="fa-solid fa-compass text-amber-400 text-sm animate-spin" style="animation-duration: 8s;"></i>
+                <span class="font-semibold text-amber-200">Petunjuk: <span id="items-found-count" class="text-amber-300 font-bold">0</span>/3</span>
+            </div>
+
+            <!-- Tracker Item Mini Status -->
+            <div class="flex items-center gap-1.5 bg-amber-950/85 backdrop-blur-md px-2.5 py-1.5 rounded-2xl border border-amber-400/60 shadow-lg text-xs pointer-events-auto">
+                <span id="badge-mempelai" class="w-6 h-6 rounded-full bg-slate-700/80 text-gray-400 flex items-center justify-center border border-gray-500" title="Info Mempelai"><i class="fa-solid fa-heart text-[10px]"></i></span>
+                <span id="badge-album" class="w-6 h-6 rounded-full bg-slate-700/80 text-gray-400 flex items-center justify-center border border-gray-500" title="Album Foto"><i class="fa-solid fa-camera text-[10px]"></i></span>
+                <span id="badge-kalender" class="w-6 h-6 rounded-full bg-slate-700/80 text-gray-400 flex items-center justify-center border border-gray-500" title="Kalender Acara"><i class="fa-solid fa-calendar text-[10px]"></i></span>
+            </div>
+
+            <button id="sound-btn" class="pointer-events-auto bg-amber-950/85 backdrop-blur-md w-10 h-10 rounded-full shadow-lg border border-amber-400 flex items-center justify-center text-amber-300">
+                <i class="fa-solid fa-music"></i>
+            </button>
+        </div>
+
+        <!-- Banner Petunjuk Bawah Top-Bar -->
+        <div id="guide-banner" class="absolute top-16 left-1/2 transform -translate-x-1/2 bg-amber-950/90 text-amber-200 text-xs px-4 py-1.5 rounded-full shadow-lg border border-amber-400/50 backdrop-blur-sm transition-all duration-300 z-10 text-center max-w-[92vw]">
+            <i class="fa-solid fa-person-walking text-amber-400 mr-1"></i> Telusuri taman & temukan 3 petunjuk sebelum menuju Pelaminan!
+        </div>
+
+        <!-- Tombol Interaksi (Akan muncul saat dekat objek) -->
+        <button id="interact-btn" class="hidden absolute bottom-28 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 text-amber-950 font-bold px-5 py-2.5 rounded-full shadow-2xl border-2 border-amber-200 z-20 text-xs sm:text-sm animate-bounce flex items-center gap-2">
+            <i class="fa-solid fa-hand-pointer text-amber-950"></i>
+            <span id="interact-text">Periksa Petunjuk</span>
+        </button>
+
+        <!-- Mobile D-PAD Navigation Controls -->
+        <div class="absolute bottom-4 left-4 z-20">
+            <div class="relative w-36 h-36">
+                <!-- Up -->
+                <button id="btn-up" class="dpad-btn absolute top-0 left-12 w-12 h-12 text-lg">
+                    <i class="fa-solid fa-caret-up"></i>
+                </button>
+                <!-- Left -->
+                <button id="btn-left" class="dpad-btn absolute top-12 left-0 w-12 h-12 text-lg">
+                    <i class="fa-solid fa-caret-left"></i>
+                </button>
+                <!-- Center Decoration -->
+                <div class="absolute top-12 left-12 w-12 h-12 rounded-full bg-amber-900/30 border border-amber-400/40 pointer-events-none flex items-center justify-center text-amber-300/60 text-xs">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <!-- Right -->
+                <button id="btn-right" class="dpad-btn absolute top-12 right-0 w-12 h-12 text-lg">
+                    <i class="fa-solid fa-caret-right"></i>
+                </button>
+                <!-- Down -->
+                <button id="btn-down" class="dpad-btn absolute bottom-0 left-12 w-12 h-12 text-lg">
+                    <i class="fa-solid fa-caret-down"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tombol Lari / Buka Pelaminan Cepat -->
+        <div class="absolute bottom-6 right-5 z-20 flex flex-col gap-2">
+            <button id="btn-action" class="dpad-btn w-14 h-14 text-xl bg-amber-500/40 border-amber-400 text-amber-900 shadow-xl">
+                <i class="fa-solid fa-crosshairs"></i>
+            </button>
+        </div>
+
+        <!-- START OVERLAY SCREEN -->
+        <div id="start-screen" class="absolute inset-0 bg-emerald-950/80 backdrop-blur-md flex items-center justify-center p-4 z-40">
+            <!-- SCENE 1: COVER UNDANGAN -->
+            <div id="scene-cover" class="glass-modal max-w-sm w-full rounded-3xl p-6 text-center shadow-2xl border-2 border-amber-400">
+                <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 text-amber-700 text-2xl shadow-inner border border-amber-300">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                </div>
+                <p class="text-xs tracking-widest uppercase font-semibold text-amber-800 mb-1">Undangan Pernikahan</p>
+                <h1 class="text-2xl sm:text-3xl font-title font-bold text-amber-900 mb-1">Putri & Firman</h1>
+                <p class="text-xs text-emerald-800 font-semibold mb-3">Petualangan Taman</p>
+
+                <p class="text-gray-700 text-[11px] leading-relaxed mb-5 italic bg-amber-50/90 p-3 rounded-2xl border border-amber-200">
+                    "Selamat datang di peta interaktif pernikahan kami! Jelajahi Taman & kumpulkan Petunjuk sebelum melangkah ke Pelaminan Agung."
+                </p>
+
+                <button id="to-char-select-btn" class="w-full py-3.5 bg-gradient-to-r from-amber-600 via-emerald-700 to-amber-700 text-amber-100 font-semibold rounded-2xl shadow-lg hover:opacity-95 transition text-sm flex items-center justify-center gap-2 border border-amber-300">
+                    <span>Lanjut Pilih Karakter</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- SCENE 2: PILIH KARAKTER -->
+            <div id="scene-character" class="glass-modal max-w-sm w-full rounded-3xl p-6 text-center shadow-2xl border-2 border-amber-400 hidden">
+                <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 text-amber-700 text-xl shadow-inner border border-amber-300">
+                    <i class="fa-solid fa-user-gear"></i>
+                </div>
+                <h2 class="text-xl font-title font-bold text-amber-900 mb-1">Pilih Karakter Penjelajah</h2>
+                <p class="text-xs text-emerald-800 font-semibold mb-4">Siapa yang akan menjelajahi taman?</p>
+
+                <!-- Pilihan 2 Karakter Pemain -->
+                <div class="grid grid-cols-2 gap-2 mb-5">
+                    <!-- Karakter 1: Pria (Firman / Melayu) -->
+                    <div id="char-card-pria" onclick="selectCharacter('pria')" class="cursor-pointer bg-amber-50 rounded-2xl p-2.5 border-2 border-amber-500 shadow-md flex flex-col items-center transition-all hover:scale-105">
+                        <div class="w-12 h-12 rounded-full bg-amber-200 border border-amber-400 flex items-center justify-center text-amber-900 text-xl mb-1 shadow-inner overflow-hidden relative">
+                            <img src="image/pria.png" onerror="this.onerror=null; this.src='pria.png'; this.nextElementSibling.classList.remove('hidden'); this.remove();" class="w-full h-full object-contain">
+                            <i class="fa-solid fa-user-ninja hidden"></i>
+                        </div>
+                        <span class="text-xs font-bold text-amber-900">Pria</span>
+                        <span class="text-[10px] text-emerald-800 font-medium"></span>
+                    </div>
+
+                    <!-- Karakter 2: Wanita (Putri / Bugis) -->
+                    <div id="char-card-wanita" onclick="selectCharacter('wanita')" class="cursor-pointer bg-white/60 rounded-2xl p-2.5 border-2 border-transparent shadow flex flex-col items-center opacity-70 transition-all hover:scale-105">
+                        <div class="w-12 h-12 rounded-full bg-rose-200 border border-rose-400 flex items-center justify-center text-rose-800 text-xl mb-1 shadow-inner overflow-hidden relative">
+                            <img src="image/wanita.png" onerror="this.onerror=null; this.src='wanita.png'; this.nextElementSibling.classList.remove('hidden'); this.remove();" class="w-full h-full object-contain">
+                            <i class="fa-solid fa-user-astronaut hidden"></i>
+                        </div>
+                        <span class="text-xs font-bold text-amber-900">Wanita</span>
+                        <span class="text-[10px] text-emerald-800 font-medium"></span>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button id="back-to-cover-btn" class="w-1/3 py-3 bg-amber-200 text-amber-900 font-semibold rounded-2xl shadow hover:bg-amber-300 transition text-xs border border-amber-400">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+                    </button>
+                    <button id="start-btn" class="w-2/3 py-3 bg-gradient-to-r from-amber-600 via-emerald-700 to-amber-700 text-amber-100 font-semibold rounded-2xl shadow-lg hover:opacity-95 transition text-xs flex items-center justify-center gap-2 border border-amber-300">
+                        <i class="fa-solid fa-shoe-prints"></i>
+                        <span>Mulai Menjelajah</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL ITEM 1: MEMPELAI -->
+        <div id="modal-mempelai" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="glass-modal max-w-sm w-full rounded-3xl p-5 text-center border-2 border-amber-400 relative">
+                <button onclick="closeModal('modal-mempelai')" class="absolute top-3 right-3 text-gray-500 hover:text-amber-800 w-8 h-8 rounded-full bg-amber-100/80 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-2 text-amber-800 text-xl border border-amber-300">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <h3 class="text-lg font-bold text-amber-900 mb-1 font-tradition">Mempelai Pengantin</h3>
+                <p class="text-xs text-emerald-800 font-semibold mb-3">Perpaduan Dua Keturunan Agung</p>
+
+                <div class="space-y-2 text-xs mb-4">
+                    <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-left">
+                        <div class="flex items-center justify-between">
+                            <p class="font-bold text-amber-900 text-sm">Putri Zulfa</p>
+                            <span class="text-[10px] bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-semibold">Melayu</span>
+                        </div>
+                        <p class="text-gray-600 text-[11px] mt-1">Putri dari Bpk. Zulkarnain & Ibu Siti Aisyah</p>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-left">
+                        <div class="flex items-center justify-between">
+                            <p class="font-bold text-amber-900 text-sm">Muhamad Firmansyah</p>
+                            <span class="text-[10px] bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded-full font-semibold">Bugis</span>
+                        </div>
+                        <p class="text-gray-600 text-[11px] mt-1">Putra dari Bpk. Firdaus & Ibu Kasmawati</p>
+                    </div>
+                </div>
+
+                <button onclick="closeModal('modal-mempelai')" class="w-full py-2.5 bg-amber-800 text-amber-100 font-semibold rounded-xl text-xs border border-amber-400">
+                    Simpan Petunjuk & Lanjutkan
+                </button>
+            </div>
+        </div>
+
+        <!-- MODAL ITEM 2: ALBUM FOTO PREWED -->
+        <div id="modal-album" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="glass-modal max-w-sm w-full rounded-3xl p-5 text-center border-2 border-amber-400 relative">
+                <button onclick="closeModal('modal-album')" class="absolute top-3 right-3 text-gray-500 hover:text-amber-800 w-8 h-8 rounded-full bg-amber-100/80 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-2 text-amber-800 text-xl border border-amber-300">
+                    <i class="fa-solid fa-camera-retro"></i>
+                </div>
+                <h3 class="text-lg font-bold text-amber-900 mb-1 font-tradition">Album Pre-Wedding</h3>
+                <p class="text-xs text-emerald-800 font-semibold mb-3">Momen Kasih Dua Insan</p>
+
+                <!-- Photo Carousel Display -->
+                <div class="relative bg-amber-900/10 rounded-2xl p-2 mb-3 border border-amber-200">
+                    <img id="photo-display" src="https://placehold.co/400x260/78350f/fef3c7?text=Foto+Prewed+Bugis-Melayu" alt="Prewedding Photo" class="w-full h-44 object-cover rounded-xl shadow-md border border-amber-300">
+                    <p id="photo-caption" class="text-[11px] italic text-amber-900 mt-2 font-medium">"Mengikatjanji dalam busana adat kebanggaan."</p>
+                    
+                    <button onclick="prevPhoto()" class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-amber-950/70 text-amber-200 flex items-center justify-center border border-amber-400">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+                    <button onclick="nextPhoto()" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-amber-950/70 text-amber-200 flex items-center justify-center border border-amber-400">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+
+                <button onclick="closeModal('modal-album')" class="w-full py-2.5 bg-amber-800 text-amber-100 font-semibold rounded-xl text-xs border border-amber-400">
+                    Simpan Foto & Lanjutkan
+                </button>
+            </div>
+        </div>
+
+        <!-- MODAL ITEM 3: KALENDER & COUNTDOWN -->
+        <div id="modal-kalender" class="hidden absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div class="glass-modal max-w-sm w-full rounded-3xl p-5 text-center border-2 border-amber-400 relative">
+                <button onclick="closeModal('modal-kalender')" class="absolute top-3 right-3 text-gray-500 hover:text-amber-800 w-8 h-8 rounded-full bg-amber-100/80 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-2 text-amber-800 text-xl border border-amber-300">
+                    <i class="fa-solid fa-calendar-days"></i>
+                </div>
+                <h3 class="text-lg font-bold text-amber-900 mb-1 font-tradition">Waktu & Countdown</h3>
+                <p class="text-xs text-emerald-800 font-semibold mb-3">Sabtu, 09 Januari 2027</p>
+
+                <!-- Live Countdown Timer -->
+                <div class="grid grid-cols-4 gap-1.5 mb-4 text-center">
+                    <div class="bg-amber-900 text-amber-100 p-2 rounded-xl border border-amber-400">
+                        <span id="cd-days" class="block font-bold text-base">00</span>
+                        <span class="text-[9px] uppercase tracking-wider text-amber-300">Hari</span>
+                    </div>
+                    <div class="bg-amber-900 text-amber-100 p-2 rounded-xl border border-amber-400">
+                        <span id="cd-hours" class="block font-bold text-base">00</span>
+                        <span class="text-[9px] uppercase tracking-wider text-amber-300">Jam</span>
+                    </div>
+                    <div class="bg-amber-900 text-amber-100 p-2 rounded-xl border border-amber-400">
+                        <span id="cd-minutes" class="block font-bold text-base">00</span>
+                        <span class="text-[9px] uppercase tracking-wider text-amber-300">Menit</span>
+                    </div>
+                    <div class="bg-amber-900 text-amber-100 p-2 rounded-xl border border-amber-400">
+                        <span id="cd-seconds" class="block font-bold text-base">00</span>
+                        <span class="text-[9px] uppercase tracking-wider text-amber-300">Detik</span>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs text-left mb-4 space-y-1 text-gray-700">
+                    <p><b>Akad Nikah:</b> 08.00 WIB (Mappaci & Tepuk Tepung Tawar)</p>
+                    <p><b>Resepsi Adat:</b> 11.00 WIB - Selesai</p>
+                    <p><b>Lokasi:</b> Jl. Teduh No. 32, Dumai</p>
+                </div>
+
+                <button onclick="closeModal('modal-kalender')" class="w-full py-2.5 bg-amber-800 text-amber-100 font-semibold rounded-xl text-xs border border-amber-400">
+                    Simpan Tanggal & Lanjutkan
+                </button>
+            </div>
+        </div>
+
+        <!-- MODAL PELAMINAN / FINAL THANK YOU -->
+        <div id="modal-pelaminan" class="hidden absolute inset-0 bg-amber-950/80 backdrop-blur-md overflow-y-auto p-4 z-50 flex items-center justify-center">
+            <div class="glass-modal max-w-md w-full rounded-3xl p-6 text-center my-auto shadow-2xl relative border-2 border-amber-400">
+                <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 text-amber-800 text-2xl border border-amber-300 animate-bounce">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                
+                <p class="text-xs uppercase tracking-widest font-bold text-amber-800 mb-1">Pesan dari Mempelai</p>
+                <h2 class="text-2xl sm:text-3xl font-title font-bold text-amber-900 mb-1">Putri & Firman</h2>
+                
+                <!-- Pesan Ucapan Terima Kasih Spesial -->
+                <div class="bg-amber-100/90 border border-amber-300 rounded-2xl p-3.5 my-3 text-xs text-amber-950 italic leading-relaxed shadow-inner">
+                    "Terima kasih banyak sudah mampir dan menjelajahi peta taman kami! Kehadiran dan doa restu dari Bapak/Ibu/Saudara/i sangat bermakna bagi kebahagiaan pernikahan kami."
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs text-left mb-3">
+                    <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200">
+                        <p class="font-bold text-amber-900">Putri Zulfa</p>
+                        <p class="text-[10px] text-emerald-800 font-medium">Pengantin Wanita</p>
+                    </div>
+                    <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200">
+                        <p class="font-bold text-amber-900">Muhamad Firmansyah</p>
+                        <p class="text-[10px] text-emerald-800 font-medium">Pengantin Pria</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-amber-900 via-emerald-900 to-amber-900 text-amber-100 rounded-2xl p-3 text-xs text-left mb-4 border border-amber-400 space-y-1">
+                    <p class="font-bold text-amber-300"><i class="fa-solid fa-calendar-check mr-1"></i> Sabtu, 09 Januari 2027</p>
+                    <p class="text-[11px] text-amber-100/90"><i class="fa-solid fa-clock mr-1"></i> Akad: 08.00 WIB | Resepsi: 11.00 WIB</p>
+                    <p class="text-[11px] text-amber-100/90"><i class="fa-solid fa-location-dot mr-1"></i> Jl. Teduh No.32, Dumai</p>
+                </div>
+
+                <!-- Google Maps Link -->
+                <a href="https://maps.google.com" target="_blank" class="block w-full py-3 bg-amber-800 text-amber-100 font-semibold rounded-xl text-xs mb-2 flex items-center justify-center gap-2 border border-amber-400 shadow-md hover:bg-amber-900">
+                    <i class="fa-solid fa-map-location-dot text-amber-300"></i>
+                    <span>Buka Google Maps Lokasi</span>
+                </a>
+
+                <button onclick="closeModal('modal-pelaminan')" class="text-xs text-amber-800 font-semibold underline mt-2 hover:text-amber-950">
+                    <i class="fa-solid fa-person-walking-arrow-loop-left mr-1"></i> Kembali Menjelajah Peta
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT GAME LOGIC -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let soundEnabled = true;
+
+        // BGM Musik Latar dari folder Music/
+        const bgm = new Audio('Music/lagu.mp3');
+        bgm.loop = true;
+
+        function playBGM() {
+            if (soundEnabled) {
+                bgm.play().catch(err => console.log('Autoplay BGM dibatasi browser:', err));
+            }
+        }
+
+        function pauseBGM() {
+            bgm.pause();
+        }
+
+        // Gambar Latar Peta dari folder image/
+        const mapBgImg = new Image();
+        mapBgImg.src = 'image/latar.png';
+
+        // Pilihan Karakter Pemain (pria.png & wanita.png)
+        let selectedCharacter = 'pria'; // default 'pria'
+        
+        const playerImgPria = new Image();
+        playerImgPria.src = 'image/pria.png';
+        playerImgPria.onerror = function() {
+            // Fallback jika ditaruh di folder luar tanpa 'image/'
+            if (this.src.indexOf('image/pria.png') !== -1) {
+                this.src = 'pria.png';
+            }
+        };
+
+        const playerImgWanita = new Image();
+        playerImgWanita.src = 'image/wanita.png';
+        playerImgWanita.onerror = function() {
+            // Fallback jika ditaruh di folder luar tanpa 'image/'
+            if (this.src.indexOf('image/wanita.png') !== -1) {
+                this.src = 'wanita.png';
+            }
+        };
+
+        function selectCharacter(gender) {
+            selectedCharacter = gender;
+            const cardPria = document.getElementById('char-card-pria');
+            const cardWanita = document.getElementById('char-card-wanita');
+
+            if (gender === 'pria') {
+                cardPria.className = "cursor-pointer bg-amber-50 rounded-2xl p-2.5 border-2 border-amber-500 shadow-md flex flex-col items-center transition-all scale-105";
+                cardWanita.className = "cursor-pointer bg-white/60 rounded-2xl p-2.5 border-2 border-transparent shadow flex flex-col items-center opacity-70 transition-all hover:scale-105";
+            } else {
+                cardWanita.className = "cursor-pointer bg-rose-50 rounded-2xl p-2.5 border-2 border-rose-500 shadow-md flex flex-col items-center transition-all scale-105";
+                cardPria.className = "cursor-pointer bg-white/60 rounded-2xl p-2.5 border-2 border-transparent shadow flex flex-col items-center opacity-70 transition-all hover:scale-105";
+            }
+            playSound('step');
+        }
+
+        // Gambar Petunjuk Interaktif & Pelaminan dari folder image/
+        const itemImages = {
+            mempelai: new Image(),
+            album: new Image(),
+            kalender: new Image(),
+            pelaminan: new Image()
+        };
+
+        itemImages.mempelai.src = 'image/prasasti.png';
+        itemImages.album.src = 'image/album.png';
+        itemImages.kalender.src = 'image/kalender.png';
+        itemImages.pelaminan.src = 'image/pelaminan.png';
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'step') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(180, now);
+                    gain.gain.setValueAtTime(0.03, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'interact') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.setValueAtTime(554.37, now + 0.08);
+                    osc.frequency.setValueAtTime(659.25, now + 0.16);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'fanfare') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.15);
+                    osc.frequency.setValueAtTime(783.99, now + 0.3);
+                    osc.frequency.setValueAtTime(1046.50, now + 0.45);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+                    osc.start(now);
+                    osc.stop(now + 0.8);
+                }
+            } catch(e) { console.log(e); }
+        }
+
+        const canvas = document.getElementById('mapCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        let gameStarted = false;
+        const mapWidth = 1400;
+        const mapHeight = 1400;
+
+        // Player State
+        const player = {
+            x: 700,
+            y: 1250,
+            size: 20,
+            speed: 3.8,
+            dx: 0,
+            dy: 0,
+            direction: 'up',
+            isWalking: false,
+            stepTimer: 0
+        };
+
+        // Camera State
+        let cameraX = 0;
+        let cameraY = 0;
+
+        // Interactive Items in Map
+        const mapItems = [
+            {
+                id: 'mempelai',
+                title: 'Surat Kabar',
+                x: 110,
+                y: 760,
+                radius: 40,
+                found: false,
+                icon: 'fa-crown',
+                modalId: 'modal-mempelai'
+            },
+            {
+                id: 'album',
+                title: 'Kamera',
+                x: 910,
+                y: 960,
+                radius: 40,
+                found: false,
+                icon: 'fa-camera-retro',
+                modalId: 'modal-album'
+            },
+            {
+                id: 'kalender',
+                title: 'Kelender',
+                x: 1060,
+                y: 550,
+                radius: 40,
+                found: false,
+                icon: 'fa-calendar-days',
+                modalId: 'modal-kalender'
+            }
+        ];
+
+        // Pelaminan Position (Goal Area at top center)
+        const pelaminanArea = {
+            x: 700,
+            y: 400,
+            radius: 80
+        };
+
+        let activeNearbyItem = null;
+        let isNearPelaminan = false;
+
+        // Keyboard Controls State
+        const keys = { up: false, down: false, left: false, right: false };
+
+        const prewedPhotos = [
+            {
+                url: "https://placehold.co/400x260/78350f/fef3c7?text=Foto+1:+Busana+Mappaci",
+                caption: '"Mappaci: Suci Hati Memohon Keberkahan Ridho Ilahi."'
+            },
+            {
+                url: "https://placehold.co/400x260/065f46/fef3c7?text=Foto+2:+Tepuk+Tepung+Tawar",
+                caption: '"Tepuk Tepung Tawar: Menabur Doa Restu & Penolak Bala."'
+            },
+            {
+                url: "https://placehold.co/400x260/991b1b/fef3c7?text=Foto+3:+Satu+Atap+Dua+Budaya",
+                caption: '"Menyatu Dalam Kasih, Menatap Masa Depan Bersama."'
+            }
+        ];
+        let currentPhotoIdx = 0;
+
+        function updatePhotoDisplay() {
+            document.getElementById('photo-display').src = prewedPhotos[currentPhotoIdx].url;
+            document.getElementById('photo-caption').innerText = prewedPhotos[currentPhotoIdx].caption;
+        }
+
+        function nextPhoto() {
+            currentPhotoIdx = (currentPhotoIdx + 1) % prewedPhotos.length;
+            updatePhotoDisplay();
+            playSound('step');
+        }
+
+        function prevPhoto() {
+            currentPhotoIdx = (currentPhotoIdx - 1 + prewedPhotos.length) % prewedPhotos.length;
+            updatePhotoDisplay();
+            playSound('step');
+        }
+
+        const weddingDate = new Date("2027-01-09T08:00:00").getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const diff = weddingDate - now;
+
+            if (diff > 0) {
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('cd-days').innerText = String(days).padStart(2, '0');
+                document.getElementById('cd-hours').innerText = String(hours).padStart(2, '0');
+                document.getElementById('cd-minutes').innerText = String(minutes).padStart(2, '0');
+                document.getElementById('cd-seconds').innerText = String(seconds).padStart(2, '0');
+            } else {
+                document.getElementById('cd-days').innerText = "00";
+                document.getElementById('cd-hours').innerText = "00";
+                document.getElementById('cd-minutes').innerText = "00";
+                document.getElementById('cd-seconds').innerText = "00";
+            }
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        function updatePlayer() {
+            if (!gameStarted) return;
+
+            player.dx = 0;
+            player.dy = 0;
+
+            if (keys.left) { player.dx = -player.speed; player.direction = 'left'; }
+            else if (keys.right) { player.dx = player.speed; player.direction = 'right'; }
+            
+            if (keys.up) { player.dy = -player.speed; player.direction = 'up'; }
+            else if (keys.down) { player.dy = player.speed; player.direction = 'down'; }
+
+            // Normalize diagonal movement speed
+            if (player.dx !== 0 && player.dy !== 0) {
+                player.dx *= 0.7071;
+                player.dy *= 0.7071;
+            }
+
+            player.isWalking = (player.dx !== 0 || player.dy !== 0);
+
+            if (player.isWalking) {
+                player.stepTimer++;
+                if (player.stepTimer % 18 === 0) {
+                    playSound('step');
+                }
+            }
+
+            // Map Bounds Collision
+            player.x += player.dx;
+            player.y += player.dy;
+
+            if (player.x < 50) player.x = 50;
+            if (player.x > mapWidth - 50) player.x = mapWidth - 50;
+            if (player.y < 120) player.y = 120;
+            if (player.y > mapHeight - 50) player.y = mapHeight - 50;
+
+            // Update Camera centered on player
+            cameraX = player.x - canvas.width / 2;
+            cameraY = player.y - canvas.height / 2;
+
+            if (cameraX < 0) cameraX = 0;
+            if (cameraY < 0) cameraY = 0;
+            if (cameraX > mapWidth - canvas.width) cameraX = mapWidth - canvas.width;
+            if (cameraY > mapHeight - canvas.height) cameraY = mapHeight - canvas.height;
+
+            // Check distance to interactive items
+            activeNearbyItem = null;
+            mapItems.forEach(item => {
+                const dist = Math.hypot(player.x - item.x, player.y - item.y);
+                if (dist < item.radius + 20) {
+                    activeNearbyItem = item;
+                }
+            });
+
+            // Check distance to Pelaminan
+            const distPelaminan = Math.hypot(player.x - pelaminanArea.x, player.y - pelaminanArea.y);
+            isNearPelaminan = distPelaminan < pelaminanArea.radius;
+
+            // Toggle Interactive UI Button
+            const interactBtn = document.getElementById('interact-btn');
+            const interactText = document.getElementById('interact-text');
+
+            if (activeNearbyItem) {
+                interactBtn.classList.remove('hidden');
+                interactText.innerText = `Periksa ${activeNearbyItem.title}`;
+            } else if (isNearPelaminan) {
+                interactBtn.classList.remove('hidden');
+                interactText.innerText = `Naik ke Pelaminan (Mempelai)`;
+            } else {
+                interactBtn.classList.add('hidden');
+            }
+        }
+
+        function drawMapEnvironment() {
+            // Jika image/latar.png ada, gambarkan langsung sebagai peta utama
+            if (mapBgImg.complete && mapBgImg.naturalWidth !== 0) {
+                ctx.drawImage(mapBgImg, 0, 0, mapWidth, mapHeight);
+            } else {
+                // Fallback Tampilan Lapangan / Grass Base jika latar.png belum ada
+                ctx.fillStyle = '#15803d';
+                ctx.fillRect(0, 0, mapWidth, mapHeight);
+
+                // Pattern Grass Detail
+                ctx.fillStyle = '#16a34a';
+                for (let x = 0; x < mapWidth; x += 120) {
+                    for (let y = 0; y < mapHeight; y += 120) {
+                        ctx.beginPath();
+                        ctx.arc(x + 30, y + 30, 25, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+                // Stone Cobblestone Paths
+                ctx.fillStyle = '#d97706';
+                ctx.fillRect(660, 200, 80, 1100);
+                ctx.fillRect(300, 930, 800, 40);
+
+                ctx.fillStyle = '#fef3c7';
+                ctx.fillRect(665, 200, 70, 1100);
+                ctx.fillRect(300, 935, 800, 30);
+
+                // Decorative Ponds
+                ctx.fillStyle = '#0284c7';
+                ctx.beginPath();
+                ctx.arc(220, 400, 90, 0, Math.PI * 2);
+                ctx.arc(1180, 400, 90, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+
+                // Lotus Flowers in Ponds
+                for (let pondX of [220, 1180]) {
+                    ctx.fillStyle = '#f43f5e';
+                    ctx.beginPath();
+                    ctx.arc(pondX - 20, 390, 10, 0, Math.PI * 2);
+                    ctx.arc(pondX + 30, 420, 12, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Decorative Trees around map
+                const treePositions = [
+                    {x: 100, y: 100}, {x: 1300, y: 100}, {x: 100, y: 700}, {x: 1300, y: 700},
+                    {x: 100, y: 1250}, {x: 1300, y: 1250}, {x: 450, y: 400}, {x: 950, y: 400}
+                ];
+
+                treePositions.forEach(t => {
+                    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                    ctx.beginPath();
+                    ctx.ellipse(t.x, t.y + 25, 35, 15, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#78350f';
+                    ctx.fillRect(t.x - 8, t.y - 10, 16, 35);
+
+                    ctx.fillStyle = '#047857';
+                    ctx.beginPath();
+                    ctx.arc(t.x, t.y - 25, 35, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = '#10b981';
+                    ctx.beginPath();
+                    ctx.arc(t.x - 10, t.y - 35, 20, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Rumah Adat Bugis / Melayu Decor
+                drawHouse(180, 1100, "Rumah Panggung Bugis");
+                drawHouse(1220, 1100, "Balai Melayu");
+            }
+        }
+
+        function drawHouse(x, y, label) {
+            ctx.save();
+            ctx.translate(x, y);
+
+            // Roof
+            ctx.fillStyle = '#78350f';
+            ctx.beginPath();
+            ctx.moveTo(-60, -20);
+            ctx.lineTo(0, -70);
+            ctx.lineTo(60, -20);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Wall
+            ctx.fillStyle = '#b45309';
+            ctx.fillRect(-50, -20, 100, 60);
+
+            // Door
+            ctx.fillStyle = '#451a03';
+            ctx.fillRect(-12, 10, 24, 30);
+
+            // Label
+            ctx.fillStyle = '#fef3c7';
+            ctx.font = '11px Poppins, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, 0, 55);
+
+            ctx.restore();
+        }
+
+        function drawInteractiveItems() {
+            mapItems.forEach(item => {
+                ctx.save();
+                ctx.translate(item.x, item.y);
+
+                // Bayangan tanah alami di bawah Petunjuk (tanpa lingkaran alas)
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.beginPath();
+                ctx.ellipse(0, 16, 20, 8, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Efek animasi melayang halus (floating)
+                const floatY = Math.sin(Date.now() / 350) * 4;
+
+                // Efek sinar berkilau / glowing shadow langsung pada Petunjuk
+                const glowPulse = 12 + Math.sin(Date.now() / 200) * 8;
+                ctx.shadowColor = item.found ? 'rgba(34, 197, 94, 0.95)' : 'rgba(245, 158, 11, 0.95)';
+                ctx.shadowBlur = glowPulse;
+
+                // Gambar PNG Petunjuk jika ada
+                const img = itemImages[item.id];
+                if (img && img.complete && img.naturalWidth !== 0) {
+                    const imgSize = 44;
+                    ctx.drawImage(img, -imgSize / 2, -imgSize / 2 + floatY - 4, imgSize, imgSize);
+                } else {
+                    // Fallback jika PNG belum termuat (tanpa alas bundar besar)
+                    ctx.fillStyle = item.found ? '#22c55e' : '#fbbf24';
+                    ctx.beginPath();
+                    ctx.arc(0, floatY - 4, 16, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.shadowColor = 'transparent';
+                    ctx.fillStyle = '#064e3b';
+                    ctx.font = 'bold 11px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(item.found ? '✓' : '?', 0, floatY - 3);
+                }
+
+                // Reset efek shadow sebelum menggambar teks judul
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+
+                // Label Judul Petunjuk Melayang
+                ctx.fillStyle = '#fef3c7';
+                ctx.font = 'bold 12px Poppins, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.title, 0, -item.radius + floatY - 2);
+
+                ctx.restore();
+            });
+        }
+
+        function drawPelaminanStage() {
+            const x = pelaminanArea.x;
+            const y = pelaminanArea.y;
+
+            ctx.save();
+            ctx.translate(x, y);
+
+            // Bayangan tanah halus di bawah pelaminan (tanpa karpet kotak)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+            ctx.beginPath();
+            ctx.ellipse(0, 35, 80, 22, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Sinar emas berkilau / glowing drop-shadow langsung pada bentuk pelaminan
+            const glowPulse = 16 + Math.sin(Date.now() / 250) * 10;
+            ctx.shadowColor = 'rgba(245, 158, 11, 0.95)';
+            ctx.shadowBlur = glowPulse;
+
+            // Jika ada PNG Pelaminan Kustom (image/pelaminan.png)
+            if (itemImages.pelaminan.complete && itemImages.pelaminan.naturalWidth !== 0) {
+                const pelWidth = 180;
+                const pelHeight = 140;
+                ctx.drawImage(itemImages.pelaminan, -pelWidth / 2, -pelHeight / 2 - 10, pelWidth, pelHeight);
+            } else {
+                // Fallback Pelaminan Arch Canopy tanpa karpet alas kotak
+                ctx.fillStyle = '#065f46';
+                ctx.beginPath();
+                ctx.moveTo(-90, -35);
+                ctx.lineTo(0, -85);
+                ctx.lineTo(90, -35);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#fbbf24';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Pilar Emas
+                ctx.fillStyle = '#fbbf24';
+                ctx.fillRect(-80, -35, 15, 75);
+                ctx.fillRect(65, -35, 15, 75);
+
+                // Sosok Pengantin di Atas Pelaminan
+                ctx.fillStyle = '#0284c7';
+                ctx.fillRect(-24, -10, 18, 32);
+                ctx.fillStyle = '#fde68a';
+                ctx.beginPath(); ctx.arc(-15, -19, 8, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#fbbf24';
+                ctx.fillRect(-22, -28, 14, 7);
+
+                ctx.fillStyle = '#059669';
+                ctx.fillRect(6, -10, 18, 32);
+                ctx.fillStyle = '#fde68a';
+                ctx.beginPath(); ctx.arc(15, -19, 8, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#fbbf24';
+                ctx.beginPath();
+                ctx.moveTo(6, -25); ctx.lineTo(15, -34); ctx.lineTo(24, -25);
+                ctx.closePath(); ctx.fill();
+            }
+
+            // Reset efek shadow untuk teks judul
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+
+            // Teks Label Pelaminan Agung
+            ctx.fillStyle = '#fef3c7';
+            ctx.font = 'bold 13px Cinzel, serif';
+            ctx.textAlign = 'center';
+            ctx.fillText("", 0, 58);
+
+            ctx.restore();
+        }
+
+        function drawPlayer() {
+            ctx.save();
+            ctx.translate(player.x, player.y);
+
+            // Shadow di bawah karakter
+            ctx.fillStyle = 'rgba(0,0,0,0.3)';
+            ctx.beginPath();
+            ctx.ellipse(0, 50, 14, 7, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Efek jalan (membal/animasi walking)
+            const bounce = player.isWalking ? Math.sin(Date.now() / 80) * 3 : 0;
+            const sway = player.isWalking ? Math.sin(Date.now() / 120) * 0.08 : 0;
+
+            ctx.translate(0, bounce);
+            ctx.rotate(sway);
+
+            // Membalikkan karakter jika menghadap ke kanan
+            if (player.direction === 'right') {
+                ctx.scale(-1, 1);
+            }
+
+            // Tentukan gambar karakter sesuai pilihan
+            const activePlayerImg = selectedCharacter === 'pria' ? playerImgPria : playerImgWanita;
+
+            // Jika gambar PNG berhasil dimuat, gambar PNG tersebut
+            if (activePlayerImg.complete && activePlayerImg.naturalWidth !== 0) {
+                const imgWidth = 120;
+                const imgHeight = 120;
+                ctx.drawImage(activePlayerImg, -imgWidth / 2, -imgHeight / 2 - 8, imgWidth, imgHeight);
+            } else {
+                // Fallback karakter gambar manual jika PNG tidak ditemukan
+                if (selectedCharacter === 'pria') {
+                    // Karakter Pria (Firman - Busana Melayu)
+                    ctx.fillStyle = '#b45309'; // Baju Teluk Belanga / Kurung Emas
+                    ctx.fillRect(-10, -5, 20, 20);
+                    ctx.fillStyle = '#1e3a8a'; // Samping Biru
+                    ctx.fillRect(-9, 5, 18, 10);
+                    ctx.fillStyle = '#fde68a'; // Kulit
+                    ctx.beginPath(); ctx.arc(0, -20, 9, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#78350f'; // Tanjak / Songkok Melayu
+                    ctx.beginPath();
+                    ctx.moveTo(-10, -22); ctx.lineTo(0, -32); ctx.lineTo(10, -22); ctx.closePath(); ctx.fill();
+                } else {
+                    // Karakter Wanita (Putri - Busana Baju Bodo Bugis)
+                    ctx.fillStyle = '#be123c'; // Baju Bodo Merah / Rose
+                    ctx.fillRect(-11, -7, 22, 22);
+                    ctx.fillStyle = '#fbbf24'; // Sarung Sutera Emas
+                    ctx.fillRect(-9, 7, 18, 11);
+                    ctx.fillStyle = '#fde68a'; // Kulit
+                    ctx.beginPath(); ctx.arc(0, -20, 9, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#f59e0b'; // Mahkota Hiasan Bunga Emas Bugis
+                    ctx.beginPath(); ctx.arc(0, -28, 6, 0, Math.PI * 2); ctx.fill();
+                }
+            }
+
+            ctx.restore();
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.translate(-cameraX, -cameraY);
+
+            drawMapEnvironment();
+            drawInteractiveItems();
+            drawPelaminanStage();
+            drawPlayer();
+
+            ctx.restore();
+        }
+
+        function gameLoop() {
+            updatePlayer();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function triggerInteraction() {
+            if (activeNearbyItem) {
+                activeNearbyItem.found = true;
+                playSound('interact');
+                
+                // Update badge UI
+                if (activeNearbyItem.id === 'mempelai') {
+                    document.getElementById('badge-mempelai').className = "w-6 h-6 rounded-full bg-amber-500 text-amber-950 flex items-center justify-center border border-amber-300 font-bold shadow";
+                } else if (activeNearbyItem.id === 'album') {
+                    document.getElementById('badge-album').className = "w-6 h-6 rounded-full bg-amber-500 text-amber-950 flex items-center justify-center border border-amber-300 font-bold shadow";
+                } else if (activeNearbyItem.id === 'kalender') {
+                    document.getElementById('badge-kalender').className = "w-6 h-6 rounded-full bg-amber-500 text-amber-950 flex items-center justify-center border border-amber-300 font-bold shadow";
+                }
+
+                const foundCount = mapItems.filter(i => i.found).length;
+                document.getElementById('items-found-count').innerText = foundCount;
+
+                // Show modal
+                document.getElementById(activeNearbyItem.modalId).classList.remove('hidden');
+                gameStarted = false;
+            } else if (isNearPelaminan) {
+                playSound('fanfare');
+                document.getElementById('modal-pelaminan').classList.remove('hidden');
+                gameStarted = false;
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            gameStarted = true;
+        }
+
+        function bindDPad(id, dir) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const start = (e) => { e.preventDefault(); keys[dir] = true; };
+            const end = (e) => { e.preventDefault(); keys[dir] = false; };
+            el.addEventListener('touchstart', start);
+            el.addEventListener('touchend', end);
+            el.addEventListener('mousedown', start);
+            el.addEventListener('mouseup', end);
+            el.addEventListener('mouseleave', end);
+        }
+
+        bindDPad('btn-up', 'up');
+        bindDPad('btn-down', 'down');
+        bindDPad('btn-left', 'left');
+        bindDPad('btn-right', 'right');
+
+        // Keyboard Controls
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
+            if (e.code === 'ArrowUp' || e.code === 'KeyW') keys.up = true;
+            if (e.code === 'ArrowDown' || e.code === 'KeyS') keys.down = true;
+            if (e.code === 'Space' || e.code === 'KeyE') triggerInteraction();
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
+            if (e.code === 'ArrowUp' || e.code === 'KeyW') keys.up = false;
+            if (e.code === 'ArrowDown' || e.code === 'KeyS') keys.down = false;
+        });
+
+        document.getElementById('interact-btn').addEventListener('click', triggerInteraction);
+        document.getElementById('btn-action').addEventListener('click', () => {
+            // Fast move / teleport near Pelaminan or trigger interaction
+            if (activeNearbyItem || isNearPelaminan) {
+                triggerInteraction();
+            } else {
+                player.x = 700;
+                player.y = 1200;
+                playSound('step');
+            }
+        });
+
+        document.getElementById('to-char-select-btn').addEventListener('click', () => {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            document.getElementById('scene-cover').classList.add('hidden');
+            document.getElementById('scene-character').classList.remove('hidden');
+            playSound('interact');
+        });
+
+        document.getElementById('back-to-cover-btn').addEventListener('click', () => {
+            document.getElementById('scene-character').classList.add('hidden');
+            document.getElementById('scene-cover').classList.remove('hidden');
+            playSound('step');
+        });
+
+        document.getElementById('start-btn').addEventListener('click', () => {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            document.getElementById('start-screen').classList.add('hidden');
+            gameStarted = true;
+            playSound('interact');
+            playBGM();
+        });
+
+        document.getElementById('sound-btn').addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('sound-btn');
+            if (soundEnabled) {
+                btn.classList.add('text-amber-300');
+                btn.classList.remove('text-gray-400');
+                if (gameStarted) playBGM();
+            } else {
+                btn.classList.remove('text-amber-300');
+                btn.classList.add('text-gray-400');
+                pauseBGM();
+            }
+        });
+
+        // Start Loop
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>
