@@ -331,14 +331,64 @@
                     "Terima kasih banyak sudah mampir dan menjelajahi peta taman kami! Kehadiran dan doa restu dari Bapak/Ibu/Saudara/i sangat bermakna bagi kebahagiaan pernikahan kami."
                 </div>
 
-                <div class="grid grid-cols-2 gap-2 text-xs text-left mb-3">
-                    <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200">
-                        <p class="font-bold text-amber-900">Putri Zulfa</p>
-                        <p class="text-[10px] text-emerald-800 font-medium">Pengantin Wanita</p>
+                <!-- KARTU ATM BSI DIGITAL (AMPLOP DIGITAL) -->
+                <div class="my-4 text-left">
+                    <p class="text-[11px] font-bold text-amber-900 mb-2 text-center uppercase tracking-wider flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-gift text-amber-600"></i> Amplop Digital & Tanda Kasih
+                    </p>
+                    
+                    <!-- Desain Kartu Debit BSI Syariah -->
+                    <div class="relative w-full rounded-2xl bg-gradient-to-r from-emerald-800 via-teal-900 to-emerald-950 p-4 text-white shadow-xl border border-emerald-400/50 overflow-hidden transition-all hover:scale-[1.01]">
+                        <!-- Pattern Glow Latar Kartu -->
+                        <div class="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-amber-400/10 blur-xl pointer-events-none"></div>
+                        <div class="absolute right-3 top-3 text-amber-400/15 text-5xl font-bold font-title pointer-events-none">BSI</div>
+                        
+                        <!-- Header Kartu BSI -->
+                        <div class="flex justify-between items-start mb-3 relative z-10">
+                            <div class="flex items-center gap-2">
+                                
+                                <div>
+                                    <h4 class="font-bold text-xs tracking-wide text-amber-200">BANK SYARIAH INDONESIA</h4>
+                                    <p class="text-[9px] text-emerald-200/80">Debit / Rekening Kasih</p>
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                        <!-- Chip Kartu ATM -->
+                        <div class="flex items-center gap-3 mb-3 relative z-10">
+                            <div class="w-9 h-7 rounded-md bg-gradient-to-tr from-amber-300 via-amber-200 to-amber-400 border border-amber-500 flex flex-col justify-between p-1 shadow-inner">
+                                <div class="w-full h-[2px] bg-amber-600/50"></div>
+                                <div class="w-full h-[2px] bg-amber-600/50"></div>
+                            </div>
+                            <i class="fa-solid fa-wifi text-emerald-300/70 text-xs rotate-90"></i>
+                        </div>
+
+                        <!-- Nomor Rekening & Tombol Salin -->
+                        <div class="relative z-10 mb-2">
+                            <span class="text-[9px] text-emerald-200/80 uppercase tracking-widest block mb-0.5">Nomor Rekening</span>
+                            <div class="flex items-center justify-between bg-black/30 backdrop-blur-sm px-3 py-2 rounded-xl border border-emerald-400/30">
+                                <span id="bsi-acc-number" class="font-mono text-sm sm:text-base font-bold tracking-wider text-amber-200">7321 3415 56</span>
+                                <button onclick="copyBsiAccount()" class="bg-amber-400 hover:bg-amber-300 text-emerald-950 px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-md active:scale-95">
+                                    <i class="fa-regular fa-copy"></i>
+                                    <span id="copy-btn-text">Salin</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Pemilik Rekening -->
+                        <div class="flex justify-between items-end relative z-10 pt-1 text-[11px]">
+                            <div>
+                                <span class="text-[9px] text-emerald-200/70 block uppercase">Atas Nama</span>
+                                <span class="font-semibold text-white tracking-wide">PUTRI ZULFA</span>
+                            </div>
+                            <i class="fa-solid fa-credit-card text-amber-300/80 text-lg"></i>
+                        </div>
                     </div>
-                    <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200">
-                        <p class="font-bold text-amber-900">Muhamad Firmansyah</p>
-                        <p class="text-[10px] text-emerald-800 font-medium">Pengantin Pria</p>
+
+                    <!-- Notifikasi Sukses Disalin -->
+                    <div id="copy-toast" class="hidden mt-2 p-2 bg-emerald-800 text-amber-200 text-xs rounded-xl text-center border border-emerald-400 shadow-md transition-all duration-300">
+                        <i class="fa-solid fa-circle-check text-amber-400 mr-1"></i> Nomor Rekening BSI berhasil disalin!
                     </div>
                 </div>
 
@@ -349,7 +399,7 @@
                 </div>
 
                 <!-- Google Maps Link -->
-                <a href="https://maps.google.com" target="_blank" class="block w-full py-3 bg-amber-800 text-amber-100 font-semibold rounded-xl text-xs mb-2 flex items-center justify-center gap-2 border border-amber-400 shadow-md hover:bg-amber-900">
+                <a href="https://maps.app.goo.gl/yCtM3jnV6yepYyNE6" target="_blank" class="block w-full py-3 bg-amber-800 text-amber-100 font-semibold rounded-xl text-xs mb-2 flex items-center justify-center gap-2 border border-amber-400 shadow-md hover:bg-amber-900">
                     <i class="fa-solid fa-map-location-dot text-amber-300"></i>
                     <span>Buka Google Maps Lokasi</span>
                 </a>
@@ -1132,6 +1182,39 @@
                 pauseBGM();
             }
         });
+
+        function copyBsiAccount() {
+            const accNum = "7321341556";
+            
+            // Menyalin nomor menggunakan elemen input sementara
+            const tempInput = document.createElement('input');
+            tempInput.value = accNum;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                
+                // Umpan balik visual pada tombol & toast
+                const btnText = document.getElementById('copy-btn-text');
+                const toast = document.getElementById('copy-toast');
+                
+                if (btnText) btnText.innerText = "Tersalin!";
+                if (toast) {
+                    toast.classList.remove('hidden');
+                    setTimeout(() => {
+                        toast.classList.add('hidden');
+                        if (btnText) btnText.innerText = "Salin";
+                    }, 2500);
+                }
+                playSound('interact');
+            } catch (err) {
+                console.error("Gagal menyalin: ", err);
+            } finally {
+                document.body.removeChild(tempInput);
+            }
+        }
 
         // Start Loop
         requestAnimationFrame(gameLoop);
