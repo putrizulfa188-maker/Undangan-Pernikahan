@@ -1017,6 +1017,9 @@
                 const foundCount = mapItems.filter(i => i.found).length;
                 document.getElementById('items-found-count').innerText = foundCount;
 
+                // Update teks banner petunjuk
+                updateGuideBanner();
+
                 // Show modal
                 document.getElementById(activeNearbyItem.modalId).classList.remove('hidden');
                 gameStarted = false;
@@ -1027,8 +1030,26 @@
             }
         }
 
+        function updateGuideBanner() {
+            const foundCount = mapItems.filter(i => i.found).length;
+            const remaining = 3 - foundCount;
+            const banner = document.getElementById('guide-banner');
+            if (!banner) return;
+
+            if (remaining > 0) {
+                if (foundCount === 0) {
+                    banner.innerHTML = `<i class="fa-solid fa-person-walking text-amber-400 mr-1"></i> Telusuri taman & temukan 3 petunjuk sebelum menuju Pelaminan!`;
+                } else {
+                    banner.innerHTML = `<i class="fa-solid fa-person-walking text-amber-400 mr-1"></i> Telusuri taman & temukan ${remaining} petunjuk lagi sebelum menuju Pelaminan!`;
+                }
+            } else {
+                banner.innerHTML = `<i class="fa-solid fa-heart text-amber-400 mr-1 animate-bounce"></i> Ayo menuju Pelaminan!`;
+            }
+        }
+
         function closeModal(modalId) {
             document.getElementById(modalId).classList.add('hidden');
+            updateGuideBanner();
             gameStarted = true;
         }
 
