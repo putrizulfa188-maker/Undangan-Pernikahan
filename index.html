@@ -316,9 +316,9 @@
         </div>
 
         <!-- MODAL PELAMINAN / FINAL THANK YOU -->
-        <div id="modal-pelaminan" class="hidden absolute inset-0 bg-amber-950/80 backdrop-blur-md overflow-y-auto p-4 z-50 flex items-center justify-center">
-            <div class="glass-modal max-w-md w-full rounded-3xl p-6 text-center my-auto shadow-2xl relative border-2 border-amber-400">
-                <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 text-amber-800 text-2xl border border-amber-300 animate-bounce">
+        <div id="modal-pelaminan" class="hidden absolute inset-0 bg-amber-950/80 backdrop-blur-md overflow-y-auto p-3 sm:p-4 z-50 flex items-start sm:items-center justify-center py-6">
+            <div class="glass-modal max-w-md w-full rounded-3xl p-4 sm:p-6 text-center my-auto shadow-2xl relative border-2 border-amber-400 max-h-[88vh] overflow-y-auto">
+                <div class="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 text-amber-800 text-xl border border-amber-300 animate-bounce">
                     <i class="fa-solid fa-heart"></i>
                 </div>
                 
@@ -326,84 +326,116 @@
                 <h2 class="text-2xl sm:text-3xl font-title font-bold text-amber-900 mb-1">Putri & Firman</h2>
                 
                 <!-- Pesan Ucapan Terima Kasih Spesial -->
-                <div class="bg-amber-100/90 border border-amber-300 rounded-2xl p-3.5 my-3 text-xs text-amber-950 italic leading-relaxed shadow-inner">
+                <div class="bg-amber-100/90 border border-amber-300 rounded-2xl p-3 my-2.5 text-xs text-amber-950 italic leading-relaxed shadow-inner">
                     "Terima kasih banyak sudah mampir dan menjelajahi peta taman kami! Kehadiran dan doa restu dari Bapak/Ibu/Saudara/i sangat bermakna bagi kebahagiaan pernikahan kami."
                 </div>
 
-                <!-- KARTU ATM BSI DIGITAL (AMPLOP DIGITAL) -->
+                <!-- KARTU AMPLOP DIGITAL GANDA & KADO FISIK -->
                 <div class="my-4 text-left">
                     <p class="text-[11px] font-bold text-amber-900 mb-2 text-center uppercase tracking-wider flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-gift text-amber-600"></i> Amplop Digital & Tanda Kasih
+                        <i class="fa-solid fa-gift text-amber-600"></i> Amplop Digital & Kirim Kado
                     </p>
-                    
-                    <!-- Desain Kartu Debit BSI Syariah -->
-                    <div class="relative w-full rounded-2xl bg-gradient-to-r from-emerald-800 via-teal-900 to-emerald-950 p-4 text-white shadow-xl border border-emerald-400/50 overflow-hidden transition-all hover:scale-[1.01]">
-                        <!-- Pattern Glow Latar Kartu -->
-                        <div class="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-amber-400/10 blur-xl pointer-events-none"></div>
-                        <div class="absolute right-3 top-3 text-amber-400/15 text-5xl font-bold font-title pointer-events-none">BSI</div>
-                        
-                        <!-- Header Kartu BSI -->
-                        <div class="flex justify-between items-start mb-3 relative z-10">
-                            <div class="flex items-center gap-2">
-                                
+
+                    <!-- Tab Switcher -->
+                    <div class="flex gap-1.5 p-1 bg-amber-900/20 rounded-xl mb-3 border border-amber-300/60">
+                        <button id="tab-btn-rekening" onclick="switchGiftTab('rekening')" class="flex-1 py-1.5 px-2 text-[11px] font-bold rounded-lg transition-all bg-amber-700 text-amber-100 shadow">
+                            <i class="fa-solid fa-credit-card mr-1"></i> Rekening Bank
+                        </button>
+                        <button id="tab-btn-kado" onclick="switchGiftTab('kado')" class="flex-1 py-1.5 px-2 text-[11px] font-bold rounded-lg transition-all bg-transparent text-amber-900 hover:bg-amber-200/50">
+                            <i class="fa-solid fa-box-open mr-1"></i> Kado Fisik
+                        </button>
+                    </div>
+
+                    <!-- TAB 1: REKENING BANK (ISTRI & SUAMI) -->
+                    <div id="tab-content-rekening" class="space-y-2.5">
+                        <!-- Card 1: Rekening Istri (Putri Zulfa) -->
+                        <div class="relative w-full rounded-2xl bg-gradient-to-r from-emerald-800 via-teal-900 to-emerald-950 p-3.5 text-white shadow-xl border border-emerald-400/50 overflow-hidden">
+                            <div class="flex justify-between items-start mb-1.5">
                                 <div>
-                                    <h4 class="font-bold text-xs tracking-wide text-amber-200">BANK SYARIAH INDONESIA</h4>
-                                    <p class="text-[9px] text-emerald-200/80">Debit / Rekening Kasih</p>
+                                    <span class="text-[9px] bg-amber-400 text-emerald-950 font-bold px-2 py-0.5 rounded-full uppercase">Mempelai Wanita</span>
+                                    <h4 class="font-bold text-xs tracking-wide text-amber-200 mt-1">BSI (Bank Syariah Indonesia)</h4>
+                                </div>
+                                <i class="fa-solid fa-credit-card text-amber-300/80 text-base"></i>
+                            </div>
+
+                            <div class="mb-1">
+                                <span class="text-[9px] text-emerald-200/80 uppercase block">Nomor Rekening</span>
+                                <div class="flex items-center justify-between bg-black/30 px-2.5 py-1.5 rounded-xl border border-emerald-400/30 mt-0.5">
+                                    <span class="font-mono text-xs sm:text-sm font-bold text-amber-200">7321 3415 56</span>
+                                    <button onclick="copyToClipboard('7321341556', 'btn-copy-istri')" id="btn-copy-istri" class="bg-amber-400 hover:bg-amber-300 text-emerald-950 px-2.5 py-1 rounded-lg text-[10px] font-bold transition active:scale-95 flex items-center gap-1">
+                                        <i class="fa-regular fa-copy"></i> Salin
+                                    </button>
                                 </div>
                             </div>
-                            
+                            <p class="text-[10px] text-emerald-100/90">a.n. <strong class="text-white">PUTRI ZULFA</strong></p>
                         </div>
 
-                        <!-- Chip Kartu ATM -->
-                        <div class="flex items-center gap-3 mb-3 relative z-10">
-                            <div class="w-9 h-7 rounded-md bg-gradient-to-tr from-amber-300 via-amber-200 to-amber-400 border border-amber-500 flex flex-col justify-between p-1 shadow-inner">
-                                <div class="w-full h-[2px] bg-amber-600/50"></div>
-                                <div class="w-full h-[2px] bg-amber-600/50"></div>
+                        <!-- Card 2: Rekening Suami (Muhamad Firmansyah) -->
+                        <div class="relative w-full rounded-2xl bg-gradient-to-r from-amber-900 via-stone-900 to-amber-950 p-3.5 text-white shadow-xl border border-amber-400/50 overflow-hidden">
+                            <div class="flex justify-between items-start mb-1.5">
+                                <div>
+                                    <span class="text-[9px] bg-amber-300 text-amber-950 font-bold px-2 py-0.5 rounded-full uppercase">Mempelai Pria</span>
+                                    <h4 class="font-bold text-xs tracking-wide text-amber-200 mt-1">BNI (Bank Negara Indonesia)</h4>
+                                </div>
+                                <i class="fa-solid fa-credit-card text-amber-300/80 text-base"></i>
                             </div>
-                            <i class="fa-solid fa-wifi text-emerald-300/70 text-xs rotate-90"></i>
-                        </div>
 
-                        <!-- Nomor Rekening & Tombol Salin -->
-                        <div class="relative z-10 mb-2">
-                            <span class="text-[9px] text-emerald-200/80 uppercase tracking-widest block mb-0.5">Nomor Rekening</span>
-                            <div class="flex items-center justify-between bg-black/30 backdrop-blur-sm px-3 py-2 rounded-xl border border-emerald-400/30">
-                                <span id="bsi-acc-number" class="font-mono text-sm sm:text-base font-bold tracking-wider text-amber-200">7321 3415 56</span>
-                                <button onclick="copyBsiAccount()" class="bg-amber-400 hover:bg-amber-300 text-emerald-950 px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-md active:scale-95">
-                                    <i class="fa-regular fa-copy"></i>
-                                    <span id="copy-btn-text">Salin</span>
-                                </button>
+                            <div class="mb-1">
+                                <span class="text-[9px] text-amber-200/80 uppercase block">Nomor Rekening</span>
+                                <div class="flex items-center justify-between bg-black/30 px-2.5 py-1.5 rounded-xl border border-amber-400/30 mt-0.5">
+                                    <span class="font-mono text-xs sm:text-sm font-bold text-amber-200">2038 3496 91</span>
+                                    <button onclick="copyToClipboard('2038349691', 'btn-copy-suami')" id="btn-copy-suami" class="bg-amber-400 hover:bg-amber-300 text-amber-950 px-2.5 py-1 rounded-lg text-[10px] font-bold transition active:scale-95 flex items-center gap-1">
+                                        <i class="fa-regular fa-copy"></i> Salin
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-
-                        <!-- Pemilik Rekening -->
-                        <div class="flex justify-between items-end relative z-10 pt-1 text-[11px]">
-                            <div>
-                                <span class="text-[9px] text-emerald-200/70 block uppercase">Atas Nama</span>
-                                <span class="font-semibold text-white tracking-wide">PUTRI ZULFA</span>
-                            </div>
-                            <i class="fa-solid fa-credit-card text-amber-300/80 text-lg"></i>
+                            <p class="text-[10px] text-amber-100/90">a.n. <strong class="text-white">MUHAMAD FIRMANSYAH</strong></p>
                         </div>
                     </div>
 
-                    <!-- Notifikasi Sukses Disalin -->
+                    <!-- TAB 2: KADO FISIK (ALAMAT PENGIRIMAN) -->
+                    <div id="tab-content-kado" class="hidden">
+                        <div class="bg-amber-50/95 border-2 border-amber-300 rounded-2xl p-3 shadow-md text-amber-950 space-y-2">
+                            <div class="flex items-center gap-2 border-b border-amber-200 pb-2">
+                                <div class="w-8 h-8 rounded-full bg-amber-200 text-amber-800 flex items-center justify-center text-sm font-bold">
+                                    <i class="fa-solid fa-truck-ramp-box"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-xs text-amber-900">Alamat Kirim Kado / Hadiah</h5>
+                                    <p class="text-[10px] text-emerald-800 font-medium">Penerima: Putri Zulfa / Firman</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white/80 p-2.5 rounded-xl border border-amber-200 text-xs font-mono text-gray-800 leading-relaxed">
+                                Jl. Teduh No. 32, Kel. Pangkalan Sesai, Kec. Dumai Barat, Kota Dumai, Riau 28824
+                            </div>
+
+                            <button onclick="copyToClipboard('Jl. Teduh No. 32, Kel. Pangkalan Sesai, Kec. Dumai Barat, Kota Dumai, Riau 28824 (Penerima: Putri Zulfa)', 'btn-copy-alamat')" id="btn-copy-alamat" class="w-full py-2 bg-amber-700 hover:bg-amber-800 text-amber-100 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95 shadow">
+                                <i class="fa-regular fa-copy"></i>
+                                <span>Salin Alamat Lengkap</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Toast Copy Success -->
                     <div id="copy-toast" class="hidden mt-2 p-2 bg-emerald-800 text-amber-200 text-xs rounded-xl text-center border border-emerald-400 shadow-md transition-all duration-300">
-                        <i class="fa-solid fa-circle-check text-amber-400 mr-1"></i> Nomor Rekening BSI berhasil disalin!
+                        <i class="fa-solid fa-circle-check text-amber-400 mr-1"></i> Berhasil disalin ke clipboard!
                     </div>
                 </div>
 
-                <div class="bg-gradient-to-r from-amber-900 via-emerald-900 to-amber-900 text-amber-100 rounded-2xl p-3 text-xs text-left mb-4 border border-amber-400 space-y-1">
+                <div class="bg-gradient-to-r from-amber-900 via-emerald-900 to-amber-900 text-amber-100 rounded-2xl p-3 text-xs text-left mb-3 border border-amber-400 space-y-1">
                     <p class="font-bold text-amber-300"><i class="fa-solid fa-calendar-check mr-1"></i> Sabtu, 07 November 2026</p>
                     <p class="text-[11px] text-amber-100/90"><i class="fa-solid fa-clock mr-1"></i> Akad: 08.00 WIB | Resepsi: 11.00 WIB</p>
                     <p class="text-[11px] text-amber-100/90"><i class="fa-solid fa-location-dot mr-1"></i> Jl. Teduh No.32, Dumai</p>
                 </div>
 
                 <!-- Google Maps Link -->
-                <a href="https://maps.app.goo.gl/yCtM3jnV6yepYyNE6" target="_blank" class="block w-full py-3 bg-amber-800 text-amber-100 font-semibold rounded-xl text-xs mb-2 flex items-center justify-center gap-2 border border-amber-400 shadow-md hover:bg-amber-900">
+                <a href="https://maps.app.goo.gl/yCtM3jnV6yepYyNE6" target="_blank" class="block w-full py-2.5 bg-amber-800 text-amber-100 font-semibold rounded-xl text-xs mb-2 flex items-center justify-center gap-2 border border-amber-400 shadow-md hover:bg-amber-900">
                     <i class="fa-solid fa-map-location-dot text-amber-300"></i>
                     <span>Buka Google Maps Lokasi</span>
                 </a>
 
-                <button onclick="closeModal('modal-pelaminan')" class="text-xs text-amber-800 font-semibold underline mt-2 hover:text-amber-950">
+                <button onclick="closeModal('modal-pelaminan')" class="text-xs text-amber-800 font-semibold underline mt-1.5 hover:text-amber-950 pb-1">
                     <i class="fa-solid fa-person-walking-arrow-loop-left mr-1"></i> Kembali Menjelajah Peta
                 </button>
             </div>
@@ -1182,29 +1214,45 @@
             }
         });
 
-        function copyBsiAccount() {
-            const accNum = "7321341556";
-            
-            // Menyalin nomor menggunakan elemen input sementara
-            const tempInput = document.createElement('input');
-            tempInput.value = accNum;
+        function switchGiftTab(tab) {
+            const tabRekening = document.getElementById('tab-content-rekening');
+            const tabKado = document.getElementById('tab-content-kado');
+            const btnRekening = document.getElementById('tab-btn-rekening');
+            const btnKado = document.getElementById('tab-btn-kado');
+
+            if (tab === 'rekening') {
+                tabRekening.classList.remove('hidden');
+                tabKado.classList.add('hidden');
+                btnRekening.className = "flex-1 py-1.5 px-2 text-[11px] font-bold rounded-lg transition-all bg-amber-700 text-amber-100 shadow";
+                btnKado.className = "flex-1 py-1.5 px-2 text-[11px] font-bold rounded-lg transition-all bg-transparent text-amber-900 hover:bg-amber-200/50";
+            } else {
+                tabRekening.classList.add('hidden');
+                tabKado.classList.remove('hidden');
+                btnKado.className = "flex-1 py-1.5 px-2 text-[11px] font-bold rounded-lg transition-all bg-amber-700 text-amber-100 shadow";
+                btnRekening.className = "flex-1 py-1.5 px-2 text-[11px] font-bold rounded-lg transition-all bg-transparent text-amber-900 hover:bg-amber-200/50";
+            }
+            playSound('step');
+        }
+
+        function copyToClipboard(text, btnId) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
             document.body.appendChild(tempInput);
             tempInput.select();
             tempInput.setSelectionRange(0, 99999);
             
             try {
                 document.execCommand('copy');
-                
-                // Umpan balik visual pada tombol & toast
-                const btnText = document.getElementById('copy-btn-text');
+                const btn = document.getElementById(btnId);
                 const toast = document.getElementById('copy-toast');
+                const originalContent = btn ? btn.innerHTML : '';
                 
-                if (btnText) btnText.innerText = "Tersalin!";
+                if (btn) btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Tersalin!';
                 if (toast) {
                     toast.classList.remove('hidden');
                     setTimeout(() => {
                         toast.classList.add('hidden');
-                        if (btnText) btnText.innerText = "Salin";
+                        if (btn) btn.innerHTML = originalContent;
                     }, 2500);
                 }
                 playSound('interact');
